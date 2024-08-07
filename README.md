@@ -5,7 +5,7 @@
 ## Repositorios Relacionados
 
 - **[Repositorio Principal](https://github.com/NickRayan1965/image2pdf)**: Este es el proyecto principal, contiene lo relacionado a la implementación completa.
-- **[Repositorio Frontend](https://github.com/tu-usuario/repositorio-frontend)**: Interfaz de usuario para interactuar con la API de Image2PDF Backend.
+- **[Repositorio Frontend](https://github.com/NickRayan1965/image2pdf_frontend)**: Interfaz de usuario para interactuar con la API de Image2PDF Backend.
 
 ## Endpoints del Backend
 
