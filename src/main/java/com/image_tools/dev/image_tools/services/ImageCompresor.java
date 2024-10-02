@@ -13,6 +13,7 @@ import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
 
 import com.image_tools.dev.image_tools.models.FileBytes;
+import com.image_tools.dev.image_tools.models.ImagePathBody;
 
 import net.coobird.thumbnailator.Thumbnails;
 import reactor.core.publisher.Flux;
@@ -133,5 +134,16 @@ public class ImageCompresor implements IImageCompresor {
       return path;
     }
     return normalizedPath.substring(lastSeparatorIndex + 1);
+  }
+
+  @Override
+  public Flux<List<FileBytes>> compressImagesFromImgPathBodies(List<ImagePathBody> imgPathBodies) {
+    return Flux.fromIterable(imgPathBodies)
+    .flatMap(imgPathBody -> {
+      return Flux.range(0, imgPathBody.getNumberOfCopies())
+      .flatMap( i -> this.compressImage(imgPathBody.getPath()))
+      .collectList()
+      ;
+    });
   }
 }

@@ -8,6 +8,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 
 import com.image_tools.dev.image_tools.models.ImagePagination;
+import com.image_tools.dev.image_tools.models.ImagePathBody;
 import com.image_tools.dev.image_tools.models.MarginConfig;
 import com.image_tools.dev.image_tools.models.PdfImageOptions;
 import com.lowagie.text.Document;
@@ -31,8 +32,7 @@ public class PdfImageManagmentService {
 
   public Mono<ByteArrayResource> getImagesOnPdf(PdfImageOptions pdfImageOptions) {
     // try {
-    System.out.println(pdfImageOptions);
-    boolean isVertical = pdfImageOptions.isVertical();
+    boolean isVertical = pdfImageOptions.getIsVertical();
     float A4WIDTH = isVertical ? A4WIDTH_DEF : A4HEIGTH_DEF;
     float A4HEIGTH = isVertical ? A4HEIGTH_DEF : A4WIDTH_DEF;
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -141,9 +141,6 @@ public class PdfImageManagmentService {
       int n_rows = imagePagination.getImagesList().size();
       float separatorsSize = (n_rows - 1) * pdfMakerTools.cmToPoints(separatorInCm);
       float total = separatorsSize + (n_rows * pdfMakerTools.cmToPoints(maxHeightInCm));
-      System.out.println("separators Size: " + separatorsSize);
-      System.out.println("total : " + total);
-
       float marginToSubtract = pdfMakerTools.cmToPoints(marginConfig.getMarginTop() + marginConfig.getMarginBottom());
       float rest = pdfMakerTools.cmToPoints(totalHeightInCm) - total - marginToSubtract;
       float sizeToMoveInTotalContext = rest / 2;
@@ -171,14 +168,15 @@ public class PdfImageManagmentService {
     return false;
   }
 
-  private Flux<Image> getCompressedImagesFromPaths(List<String> paths) {
-    return imageCompressor.compressImagesFromPaths(paths).map(fileBytes -> {
-      try {
-        return Image.getInstance(fileBytes.getBytes());
-
-      } catch (Exception e) {
-        return null;
-      }
+  private Flux<Image> getCompressedImagesFromPaths(List<ImagePathBody> imagePathBodies) {
+    return imageCompressor.compressImagesFromImgPathBodies(imagePathBodies).flatMapIterable(fileBytesList -> {
+      return fileBytesList.stream().map(image->{
+        try {
+          return Image.getInstance(image.getBytes());
+        } catch (Exception e) {
+          return null;
+        }
+      }).toList();
     });
   }
 

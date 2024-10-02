@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 public class PdfImageOptions {
   private Float maxWidth;
   private Float maxHeight;
-  private boolean isVertical;
-  private List<String> imagePaths;
+  private Boolean isVertical;
+  private List<ImagePathBody> imagePaths;
   private boolean forceSize;
 
   @Builder.Default
